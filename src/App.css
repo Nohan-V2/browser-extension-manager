@@ -4,6 +4,14 @@
   padding: 0;
 }
 
+html {
+  user-select: none;
+}
+
+.hidden {
+  display: none !important;
+}
+
 .main-container {
   display: flex;
   flex-direction: column;
@@ -58,8 +66,32 @@
   list-style: none;
 }
 
-.card-wrapper {}
+.card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background-color: #FBFDFE;
+  border: 1px solid #D6E2F5;
+  box-shadow: 0px 1px 5px 1px #C2CEE138, 0px 2px 2px 0px #C2CEE133;
+}
 
 .info-card {
   display: flex;
+  gap: 16px;
+
+  img {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+.description-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-btn-wrapper {
+  display: flex;
+  justify-content: space-between;
 }
