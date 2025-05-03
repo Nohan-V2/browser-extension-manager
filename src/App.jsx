@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import Header from "./components/Header.jsx"
-import TitleWrapper from "./components/TitleWrapper.jsx"
-import SelectorContainer from "./components/SelectorContainer.jsx"
-import ListCard from "./components/ListeCard.jsx"
-import Card from "./components/Card.jsx"
-import InfoCard from "./components/InfoCard.jsx"
-import DescriptionCard from "./components/DescriptionCard.jsx"
-import CardBtnWrapper from "./components/CardBtnWrapper.jsx"
-
+import Header from "./components/Header.jsx";
+import TitleWrapper from "./components/TitleWrapper.jsx";
+import SelectorContainer from "./components/SelectorContainer.jsx";
+import ListCard from "./components/ListeCard.jsx";
+import Card from "./components/Card.jsx";
+import InfoCard from "./components/InfoCard.jsx";
+import DescriptionCard from "./components/DescriptionCard.jsx";
+import CardBtnWrapper from "./components/CardBtnWrapper.jsx";
+import ToggleBtn from "./components/ToggleBtn.jsx";
 
 function App() {
   const [userData, setUserData] = useState([]);
+  const [filter, setFilter] = useState('All'); 
 
   useEffect(() => {
     async function getData() {
@@ -24,13 +25,27 @@ function App() {
     getData();
   }, []);
 
-  // Fonction pour supprimer une extension
   const handleRemove = (index) => {
     const updatedUserData = userData.filter((_, i) => i !== index);
     setUserData(updatedUserData);
   };
 
-  console.log(userData);
+  const handleToggle = (index) => {
+    const updatedUserData = userData.map((user, i) =>
+      i === index ? { ...user, isActive: !user.isActive } : user
+    );
+    setUserData(updatedUserData);
+  };
+
+  const handleFilterChange = (selectedFilter) => {
+    setFilter(selectedFilter);
+  };
+
+  const filteredData = userData.filter((user) => {
+    if (filter === 'Active') return user.isActive;
+    if (filter === 'Inactive') return !user.isActive;
+    return true;
+  });
 
   return (
     <main className="main-container">
@@ -39,29 +54,33 @@ function App() {
       </Header>
 
       <TitleWrapper>
-      <h1 className="title-extension">Extensions List</h1>
-
-      <SelectorContainer />
+        <h1 className="main-title">Extensions List</h1>
+        <SelectorContainer onFilterChange={handleFilterChange} />
       </TitleWrapper>
 
       <ListCard>
-      {userData.map((user, index) => (
-        <Card key={index}>
-          <InfoCard>
-            <img src={user.logo} alt={user.name} />
-            <DescriptionCard>
-              <h2 className="title-extension">{user.name}</h2>
-              <p className="description-extension">{user.description}</p>
-            </DescriptionCard>
-          </InfoCard>
+        {filteredData.map((user, index) => (
+          <Card key={index} className={filter === 'All' ? '' : user.isActive ? 'active' : 'inactive'}>
+            <InfoCard>
+              <img src={user.logo} alt={user.name} />
+              <DescriptionCard>
+                <h2 className="title-extension">{user.name}</h2>
+                <p className="description-extension">{user.description}</p>
+              </DescriptionCard>
+            </InfoCard>
 
-          <CardBtnWrapper>
-            <button onClick={() => handleRemove(index)}>Remove</button>
+            <CardBtnWrapper>
+              <button className="remove-btn" onClick={() => handleRemove(index)}>
+                Remove
+              </button>
 
-            <input type="checkbox" name="slider" id="slider" />
-          </CardBtnWrapper>
-        </Card>
-      ))}
+              <ToggleBtn
+                isActive={user.isActive}
+                onToggle={() => handleToggle(index)}
+              />
+            </CardBtnWrapper>
+          </Card>
+        ))}
       </ListCard>
     </main>
   );
